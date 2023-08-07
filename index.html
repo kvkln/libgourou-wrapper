@@ -55,6 +55,7 @@
             }
         }
         function submit() {
+            const input = document.getElementById("fileinput")
             for (const file of input.files) {
                 formData = new FormData()
                 formData.append("file", file);
@@ -68,6 +69,6 @@
     
     <h1>Drop .acsm Files here.</h1>
     <input type="file" id="fileinput" multiple />
-    <input type="button" onclick="submit" value="Submit"/>
+    <input type="button" onclick="submit()" value="Submit"/>
 </body>
 </html>
