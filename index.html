@@ -63,24 +63,27 @@
                     method: 'post',
                     body: formData,
                 })
-                    .then(res => {
-                        const disposition = res.headers.get('content-disposition')
-                        console.log({ disposition })
-                        filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1]
-                        if (filename.toLowerCase().startsWith("utf-8''"))
-                            filename = decodeURIComponent(filename.replace(/utf-8''/i, ''))
-                        else
-                            filename = filename.replace(/['"]/g, '')
-                        return res.blob()
-                    })
-                    .then(blob => {
-                        var url = window.URL.createObjectURL(blob)
-                        var a = document.createElement('a')
-                        a.href = url
-                        a.download = filename
-                        document.body.appendChild(a)
-                        a.click()
-                        a.remove()
+                    .then(async res => {
+                        if (res.ok) {
+                            const disposition = res.headers.get('content-disposition')
+                            console.log({ disposition })
+                            filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1]
+                            if (filename.toLowerCase().startsWith("utf-8''"))
+                                filename = decodeURIComponent(filename.replace(/utf-8''/i, ''))
+                            else
+                                filename = filename.replace(/['"]/g, '')
+                            const blob = await res.blob()
+
+                            const url = window.URL.createObjectURL(blob)
+                            const a = document.createElement('a')
+                            a.href = url
+                            a.download = filename
+                            document.body.appendChild(a)
+                            a.click()
+                            a.remove()
+                        } else {
+                            alert('Error: ' + await res.text())
+                        }
                     })
             }
         }
