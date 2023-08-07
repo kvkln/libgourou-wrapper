@@ -16,14 +16,6 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
-      - name: apply version tag
-        run: |
-          if [ "${{ github.ref_type }}" == "tag" ]; then
-            sed -i "s/'0.0.0'/'${{ github.ref_name }}'/" app/main.py
-          else
-            sed -i "s/'0.0.0'/'edge'/" app/main.py
-          fi
-
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
