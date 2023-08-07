@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>gourou</title>
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -30,25 +30,22 @@
             font-size: 30pt;
             font-weight: normal;
         }
-
     </style>
 </head>
-<body 
-    ondrop="dropHandler(event)"
-    ondragover="dragoverHandler(event)"
-    >
+
+<body ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
     <script>
         function dragoverHandler(ev) {
-            ev.preventDefault();
-            ev.dataTransfer.dropEffect = "move";
+            ev.preventDefault()
+            ev.dataTransfer.dropEffect = "move"
         }
         function dropHandler(ev) {
             // Prevent default behavior (Prevent file from being opened)
-            ev.preventDefault();
+            ev.preventDefault()
 
             if (ev.dataTransfer.files.length != 0) {
                 const input = document.getElementById("fileinput")
-                let dt = new DataTransfer();
+                let dt = new DataTransfer()
                 for (const file of input.files) dt.items.add(file)
                 for (const file of ev.dataTransfer.files) dt.items.add(file)
                 input.files = dt.files
@@ -58,17 +55,40 @@
             const input = document.getElementById("fileinput")
             for (const file of input.files) {
                 formData = new FormData()
-                formData.append("file", file);
+                formData.append("file", file)
+
+                let filename = 'book.epub'
+
                 fetch("/convert", {
                     method: 'post',
                     body: formData,
-                });
+                })
+                    .then(res => {
+                        const disposition = res.headers.get('content-disposition')
+                        console.log({ disposition })
+                        filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1]
+                        if (filename.toLowerCase().startsWith("utf-8''"))
+                            filename = decodeURIComponent(filename.replace(/utf-8''/i, ''))
+                        else
+                            filename = filename.replace(/['"]/g, '')
+                        return res.blob()
+                    })
+                    .then(blob => {
+                        var url = window.URL.createObjectURL(blob)
+                        var a = document.createElement('a')
+                        a.href = url
+                        a.download = filename
+                        document.body.appendChild(a)
+                        a.click()
+                        a.remove()
+                    })
             }
         }
     </script>
-    
+
     <h1>Drop .acsm Files here.</h1>
-    <input type="file" id="fileinput" multiple />
-    <input type="button" onclick="submit()" value="Submit"/>
+    <input type="file" id="fileinput" multiple accept="*.acsm" />
+    <input type="button" onclick="submit()" value="Submit" />
 </body>
+
 </html>
