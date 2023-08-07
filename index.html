@@ -1,1 +1,73 @@
-TODO
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 4em);
+            margin: 2em;
+            padding: 0;
+            border: 5px dashed gray;
+            border-radius: 1em;
+        }
+
+        body.dragover {
+            background-color: black;
+        }
+
+        body h1 {
+            font-size: 30pt;
+            font-weight: normal;
+        }
+
+    </style>
+</head>
+<body 
+    ondrop="dropHandler(event)"
+    ondragover="dragoverHandler(event)"
+    >
+    <script>
+        function dragoverHandler(ev) {
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "move";
+        }
+        function dropHandler(ev) {
+            // Prevent default behavior (Prevent file from being opened)
+            ev.preventDefault();
+
+            if (ev.dataTransfer.files.length != 0) {
+                const input = document.getElementById("fileinput")
+                let dt = new DataTransfer();
+                for (const file of input.files) dt.items.add(file)
+                for (const file of ev.dataTransfer.files) dt.items.add(file)
+                input.files = dt.files
+            }
+        }
+        function submit() {
+            for (const file of input.files) {
+                formData = new FormData()
+                formData.append("file", file);
+                fetch("/convert", {
+                    method: 'post',
+                    body: formData,
+                });
+            }
+        }
+    </script>
+    
+    <h1>Drop .acsm Files here.</h1>
+    <input type="file" id="fileinput" multiple />
+    <input type="button" onclick="submit" value="Submit"/>
+</body>
+</html>
