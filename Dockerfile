@@ -34,4 +34,4 @@ COPY index.html ./www/index.html
 
 USER gourou
 
-ENTRYPOINT ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080", "--no-server-header"]
+ENTRYPOINT ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080", "--no-server-header", "--ws", "none"]

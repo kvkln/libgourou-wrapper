@@ -18,7 +18,7 @@ async def cleanup_tempdirs():
     while True:
         try:
             for d in cleanup_dirs:
-                if time.time() - os.stat(d).st_mtime > 10:
+                if time.time() - os.stat(d).st_mtime > 5 * 60:
                     shutil.rmtree(d)
                     cleanup_dirs.remove(d)
         except Exception:
@@ -51,6 +51,7 @@ async def convert_files(file: Annotated[bytes, File()]):
 
     tmpdirname = f'/tmp/{uuid.uuid4().hex}'
     os.makedirs(tmpdirname)
+    cleanup_dirs.add(tmpdirname)
     input_filepath = f'{tmpdirname}/book.acsm'
     with open(input_filepath, 'wb') as f:
         f.write(file)
@@ -64,7 +65,6 @@ async def convert_files(file: Annotated[bytes, File()]):
         'adept_remove', '--adept-directory', '/tmp/.adept', '--output-dir', tmpdirname,
         '--output-file', tmp_filename, os.path.join(tmpdirname, filename)
     )
-    cleanup_dirs.add(tmpdirname)
     return FileResponse(os.path.join(tmpdirname, tmp_filename), filename=filename)
 
 
