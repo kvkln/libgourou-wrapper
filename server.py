@@ -29,7 +29,7 @@ async def cleanup_tempdirs():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not os.path.isdir('/app/.adept'):
+    if not os.path.isdir('/tmp/.adept'):
         proc = await asyncio.create_subprocess_exec('adept_activate', '--anonymous', '--random-serial', '--output-dir', '/tmp/.adept')
         await proc.communicate()
         if proc.returncode != 0:
