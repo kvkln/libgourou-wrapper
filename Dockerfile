@@ -26,7 +26,7 @@ ENV PYTHONUNBUFFERED=True
 COPY requirements.txt ./requirements.txt
 RUN apk update --no-cache && \
     apk add --no-cache libcurl libzip pugixml python3 py3-pip && \
-    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt --break-system-packages && \
     apk del --no-cache py3-pip
 
 COPY server.py ./server.py
