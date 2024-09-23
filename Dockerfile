@@ -4,7 +4,7 @@ RUN apk add g++ pugixml-dev openssl-dev curl-dev libzip-dev make bash git
 
 WORKDIR /usr/src
 
-RUN git clone https://forge.soutade.fr/soutade/libgourou.git \
+RUN git clone git://soutade.fr/libgourou.git \
   && cd libgourou \
   && make BUILD_STATIC=1
 
