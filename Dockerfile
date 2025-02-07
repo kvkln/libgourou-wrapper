@@ -4,8 +4,12 @@ RUN apk add g++ pugixml-dev openssl-dev curl-dev libzip-dev make bash git
 
 WORKDIR /usr/src
 
-RUN git clone git://soutade.fr/libgourou.git \
+RUN git clone https://forge.soutade.fr/soutade/libgourou.git \
   && cd libgourou \
+  && git clone https://forge.soutade.fr/soutade/uPDFParser lib/updfparser \
+  && cd lib/updfparser \
+  && make BUILD_STATIC=1 BUILD_SHARED=0 \
+  && cd ../.. \
   && make BUILD_STATIC=1
 
 
