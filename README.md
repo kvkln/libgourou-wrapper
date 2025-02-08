@@ -1,7 +1,22 @@
 # libgourou-wrapper
 A wrapper for libgourou to convert DRM protected Ebooks to epub.
 
-## Usage
+## Deployment
+
+```yaml
+services:
+  libgourou-wrapper:
+    image: ghcr.io/kvkln/libgourou-wrapper:edge
+    restart: always
+    hostname: libgourou-wrapper
+    mem_limit: 300m
+    memswap_limit: 300m
+    cpus: 2
+    ports:
+      - 8080:8080
+```
+
+## Build
 
 ```bash
 # build the Docker file
