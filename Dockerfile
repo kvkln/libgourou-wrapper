@@ -1,4 +1,4 @@
-FROM alpine:3.22.1 AS builder
+FROM alpine:3.22.2 AS builder
 
 RUN apk add g++ pugixml-dev openssl-dev curl-dev libzip-dev make bash git
 
@@ -14,7 +14,7 @@ RUN git clone https://forge.soutade.fr/soutade/libgourou.git \
 
 
 
-FROM alpine:3.22.1
+FROM alpine:3.22.2
 
 COPY --from=builder /usr/src/libgourou/utils/acsmdownloader \
                     /usr/src/libgourou/utils/adept_activate \
