@@ -60,9 +60,9 @@ async def convert_files(file: Annotated[bytes, File()]):
         filename = os.path.basename(next((entry for entry in os.listdir(tmpdirname) if entry != 'book.acsm')))
     except StopIteration:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='No file downloaded')
-    tmp_filename = 'out' + Path(filename).suffix
+    tmp_filename = tmpdirname + '/out' + Path(filename).suffix
     await exe(
-        'adept_remove', '--adept-directory', '/tmp/.adept', '--output-dir', tmpdirname,
+        'adept_remove', '--adept-directory', '/tmp/.adept',
         '--output-file', tmp_filename, os.path.join(tmpdirname, filename)
     )
     return FileResponse(os.path.join(tmpdirname, tmp_filename), filename=filename)
