@@ -1,0 +1,108 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 4em);
+    margin: 2em;
+    padding: 0;
+    border: 5px dashed gray;
+    border-radius: 1em;
+}
+
+body.dragover {
+    background-color: black;
+}
+
+body h1 {
+    font-size: 30pt;
+    margin-top: 0;
+    font-weight: normal;
+    text-align: center;
+}
+
+#fileinput {
+    display: none;
+}
+
+#filelist {
+    display: flex;
+    flex-direction: column;
+    max-width: 70em;
+    min-height: 5em;
+    max-height: calc(100vh - 15em);
+    overflow: scroll;
+}
+
+#filelist span {
+    margin: .2em;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1em;
+}
+
+.btn {
+    color: white;
+    border: none;
+    border-radius: 1em;
+    padding: 0.7em;
+    width: 10em;
+    margin-top: 1em;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.submit {
+    background: #36f;
+    padding: 0;
+}
+
+.submit:hover:not(.loading) {
+    background: #33ccff;
+}
+
+.submit:active:not(.loading) {
+    transform: scale(0.95);
+}
+
+.submit.loading #spinner {
+    display: inline-block;
+}
+
+.submit.loading #submit-text {
+    display: none;
+}
+
+.clear {
+    background: #f33;
+}
+
+.clear:hover {
+    background: #fc7a7a;
+}
+
+.spinner {
+    display: none;
+    margin-top: 0.15em;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #36f;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
