@@ -28,13 +28,103 @@
 
         body h1 {
             font-size: 30pt;
+            margin-top: 0;
             font-weight: normal;
+            text-align: center;
         }
+
+        #fileinput {
+            display: none;
+        }
+
+        #filelist {
+            display: flex;
+            flex-direction: column;
+            max-width: 70em;
+            min-height: 5em;
+            max-height: calc(100vh - 15em);
+            overflow: scroll;
+        }
+
+        #filelist span {
+            margin: .2em;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1em;
+        }
+
+        .btn {
+            color: white;
+            border: none;
+            border-radius: 1em;
+            padding: 0.7em;
+            width: 10em;
+            margin-top: 1em;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .submit {
+            background: #36f;
+            padding: 0;
+        }
+
+        .submit:hover:not(.loading) {
+            background: #33ccff;
+        }
+
+        .submit:active:not(.loading) {
+            transform: scale(0.95);
+        }
+
+        .submit.loading #spinner {
+            display: inline-block;
+        }
+
+        .submit.loading #submit-text {
+            display: none;
+        }
+
+        .clear {
+            background: #f33;
+        }
+
+        .clear:hover {
+            background: #fc7a7a;
+        }
+
+        .spinner {
+            display: none;
+            margin-top: 0.15em;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #36f;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
 
 <body ondrop="dropHandler(event)" ondragover="dragoverHandler(event)">
     <script>
+        // Files stay in the fileinput when reloading; add them to the list again
+        window.addEventListener('load', function() {
+            const fileinput = document.getElementById("fileinput");
+            appendFilesToFileList(fileinput.files);
+        });
         function dragoverHandler(ev) {
             ev.preventDefault()
             ev.dataTransfer.dropEffect = "move"
@@ -44,15 +134,33 @@
             ev.preventDefault()
 
             if (ev.dataTransfer.files.length != 0) {
-                const input = document.getElementById("fileinput")
-                let dt = new DataTransfer()
-                for (const file of input.files) dt.items.add(file)
-                for (const file of ev.dataTransfer.files) dt.items.add(file)
-                input.files = dt.files
+                const fileinput = document.getElementById("fileinput")
+                const dt = new DataTransfer()
+                for (const file of fileinput.files) dt.items.add(file)
+                let acsmFiles = []
+                for (const file of ev.dataTransfer.files) 
+                    if (file.name.toLowerCase().endsWith(".acsm")) {
+                        acsmFiles.push(file)
+                        dt.items.add(file)
+                    }
+                fileinput.files = dt.files
+                appendFilesToFileList(acsmFiles)
+            }
+        }
+        function appendFilesToFileList(files) {
+            const filelist = document.getElementById("filelist");
+            for (const file of files) {
+                const span = document.createElement("span");
+                span.innerText = file.name
+                filelist.appendChild(span)
             }
         }
         function submit() {
             const input = document.getElementById("fileinput")
+            if (input.files.length === 0) return;
+            const submitButton = document.getElementById("submit-btn");
+            submitButton.classList.toggle("loading", true);
+            let pending = input.files.length;
             for (const file of input.files) {
                 formData = new FormData()
                 formData.append("file", file)
@@ -85,13 +193,35 @@
                             alert('Error: ' + await res.text())
                         }
                     })
+                    .catch(err => {
+                        alert('Error: ' + err.message)
+                    })
+                    .finally(() => {
+                        pending--;
+                        if (pending === 0) {
+                            submitButton.classList.toggle("loading", false);
+                        }
+                    })
             }
+        }
+        function clearFiles() {
+            const input = document.getElementById("fileinput")
+            input.value = ""
+            const filelist = document.getElementById("filelist");
+            filelist.innerHTML = ""
         }
     </script>
 
     <h1>Drop .acsm Files here.</h1>
-    <input type="file" id="fileinput" multiple accept="*.acsm" />
-    <input type="button" onclick="submit()" value="Submit" />
+    <input type="file" id="fileinput" multiple accept=".acsm" />
+    <div id="filelist"></div>
+    <div class="button-group">
+        <button id="submit-btn" class="btn submit" onclick="submit()">
+            <span id="submit-text">Submit</span>
+            <div id="spinner" class="spinner"></div>
+        </button>
+        <input type="button" class="btn clear" onclick="clearFiles()" value="Clear File List" />
+    </div>
 </body>
 
 </html>
