@@ -17,7 +17,7 @@ cleanup_dirs = set()
 async def cleanup_tempdirs():
     while True:
         try:
-            for d in cleanup_dirs:
+            for d in cleanup_dirs.copy():
                 if time.time() - os.stat(d).st_mtime > 5 * 60:
                     shutil.rmtree(d)
                     cleanup_dirs.remove(d)
@@ -42,7 +42,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/convert")
 async def convert_files(file: Annotated[bytes, File()]):
-
+    # todo: only accept acsm
     async def exe(*args):
         proc = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.PIPE,  stderr=asyncio.subprocess.PIPE)
         stdout, stderr = await proc.communicate()
