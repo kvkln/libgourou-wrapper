@@ -35,6 +35,8 @@ RUN apk update --no-cache && \
 
 COPY server.py ./server.py
 COPY index.html ./www/index.html
+COPY style.css ./www/style.css
+COPY script.js ./www/script.js
 
 USER gourou
 
